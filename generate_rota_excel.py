@@ -9,6 +9,7 @@ from openpyxl.styles import PatternFill
 # -------------------------------
 # 0=Mon, 1=Tue, ..., 4=Fri
 # Each person has 'week1' and 'week2' keys
+###Add in names here
 people = [
     "Alice","Bob","Charlie","Diana","Ethan","Fiona",
     "George","Hannah","Ian","Jane","Karl","Liam",
