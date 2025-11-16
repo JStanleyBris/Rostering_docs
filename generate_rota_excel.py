@@ -45,24 +45,84 @@ cannot_swap_weekend_site = ["Alice","Charlie","George","Mona"]
 acf_doctors = ["Fiona", "Hannah", "Liam", "Nina"]
 
 # Example unavailable dates
-unavailable = {
-    "Alice": {"2026-03-10":"Annual Leave","2026-05-15":"Conference"},
-    "Bob": {"2026-04-22":"Training"},
-    "Charlie": {},
-    "Diana": {"2026-06-03":"Annual Leave","2026-06-04":"Annual Leave"},
-    "Ethan": {},
-    "Fiona": {"2026-07-12":"Personal Leave"},
-    "George": {},
-    "Hannah": {"2026-02-25":"Sick Leave","2026-02-26":"Sick Leave"},
-    "Ian": {},
-    "Jane": {"2026-04-08":"Conference"},
-    "Karl": {},
-    "Liam": {},
-    "Mona": {},
-    "Nina": {},
-    "Oliver": {},
-    "Paula": {},
+
+unavailable_dates = {
+    "Alice": {
+        ("2026-03-10", "2026-03-14"): "Annual Leave", 
+        "2026-05-15": "Conference"
+    },
+    "Bob": {
+        "2026-04-22": "Training",
+        ("2026-09-05", "2026-09-06"): "Weekend Away"
+    },
+    "Charlie": {
+        ("2026-07-01", "2026-07-03"): "Annual Leave"
+    },
+    "Diana": {
+        ("2026-06-03", "2026-06-07"): "Annual Leave"
+    },
+    "Ethan": {
+        "2026-02-18": "Study Leave"
+    },
+    "Fiona": {
+        "2026-07-12": "Personal Leave",
+        ("2026-11-20", "2026-11-22"): "Conference"
+    },
+    "George": {
+        ("2026-05-01", "2026-05-03"): "Annual Leave"
+    },
+    "Hannah": {
+        ("2026-02-25", "2026-02-28"): "Sick Leave"
+    },
+    "Ian": {
+        "2026-06-10": "Training"
+    },
+    "Jane": {
+        "2026-04-08": "Conference",
+        ("2026-12-23", "2026-12-27"): "Christmas Leave"
+    },
+    "Karl": {
+        ("2026-03-20", "2026-03-22"): "Annual Leave"
+    },
+    "Liam": {
+        ("2026-08-15", "2026-08-19"): "Annual Leave"
+    },
+    "Mona": {
+        "2026-10-03": "Wedding"
+    },
+    "Nina": {
+        ("2026-05-10", "2026-05-12"): "Sick Leave"
+    },
+    "Oliver": {
+        ("2026-01-02", "2026-01-04"): "New Year Leave"
+    },
+    "Paula": {
+        ("2026-09-14", "2026-09-18"): "Annual Leave"
+    },
 }
+
+#Define a function to handle the dat ranges:
+
+def expand_unavailable(unavailable):
+    expanded = {}
+    for person, absences in unavailable.items():
+        expanded[person] = {}
+        for key, reason in absences.items():
+            if isinstance(key, tuple):  # a (start, end) range
+                start = datetime.strptime(key[0], "%Y-%m-%d")
+                end = datetime.strptime(key[1], "%Y-%m-%d")
+                current = start
+                while current <= end:
+                    expanded[person][current.strftime("%Y-%m-%d")] = reason
+                    current += timedelta(days=1)
+            else:  # a single date
+                expanded[person][key] = reason
+    return expanded
+
+#Use function to expand date ranges to dates for use in rostering
+
+unavailable = expand_unavailable(unavailable_dates)
+
 
 # -------------------------------
 # 2️⃣ Define rota dates
@@ -157,6 +217,9 @@ for sat, sun in weekend_blocks:
 bank_holiday_rota = {}
 bank_holiday_assigned_sm = defaultdict(int)
 bank_holiday_assigned_uhbw = defaultdict(int)
+
+total_bh = len(bank_holidays)*2
+target_bh = {p: total_bh*(fte[p]/total_fte) for p in people}
 
 for bh_date_str, bh_name in bank_holidays.items():
     bh_date = datetime.strptime(bh_date_str, "%Y-%m-%d")
@@ -319,7 +382,7 @@ for p in people:
 print("\nBH summary:")
 for p in people:
     bh_count = bank_holiday_assigned_sm.get(p,0) + bank_holiday_assigned_uhbw.get(p,0)
-    print(f"{p:<8} {bh_count} BH (Target: {target_shifts[p]:.1f})")
+    print(f"{p:<8} {bh_count} BH (Target: {target_bh[p]:.1f})")
 
 print("\nWeekday summary:")
 for p in people:
