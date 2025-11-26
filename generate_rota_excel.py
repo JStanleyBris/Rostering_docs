@@ -13,6 +13,8 @@ random.seed(42) # Maintain reproducibility across runs
 # Each person has 'week1' and 'week2' keys
 # TO HANNAH - the spelling of the person must be consistent throughout. And the number of people must also remain consistent
 
+#TO HANNAH - if you can read this line then I have updated the Friday code and saved succesfully as per our messages on 26.11.25 at 17:00
+
 people = [
     "Alice","Bob","Charlie","Diana","Ethan","Fiona",
     "George","Hannah","Ian","Jane","Karl","Liam",
@@ -301,8 +303,7 @@ for d in all_dates:
     available_people = [
         p for p in people
         if (
-            d.weekday() in work_schedule[p][week_key]
-            and assigned_friday_counts[p] < target_fridays[p]
+            assigned_friday_counts[p] < target_fridays[p] #\Anyone can do Friday even if not in working pattern
             and date_str not in unavailable.get(p,{})
             and date_str not in weekend_protection.get(p,set())
         )
@@ -311,8 +312,7 @@ for d in all_dates:
     if not available_people:
         working_people = [
             p for p in people
-            if d.weekday() in work_schedule[p][week_key]
-            and date_str not in unavailable.get(p,{})
+            if date_str not in unavailable.get(p,{}) #anyone can do Friday even if not working pattern
             and date_str not in weekend_protection.get(p,set())
         ]
         available_people = sorted(working_people, key=lambda x: assigned_friday_counts[x]/fte[x])
