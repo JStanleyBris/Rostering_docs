@@ -21,7 +21,6 @@ people = [
     "Mona","Nina","Oliver","Paula"
 ]
 
-# TO HANNAH - if anyone doesn't work Fridays then they don't get Fridays on call. If there is anyone in this category then they will get 0 here in the Friday count. To discuss. 
 
 work_schedule = {
     "Alice":    {"week1": [1,2,3,4],     "week2": [0,2,3,4]},    # Alternate Mon/Tuesday off
