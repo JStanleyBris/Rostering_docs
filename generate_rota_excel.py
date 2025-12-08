@@ -45,7 +45,7 @@ work_schedule = {
 #TO HANNAH - ensure everyone is allocated to one site here
 
 # Groups
-southmead_group = ["Tim","Frances","MarckHac","Gavin","Amy","Jack","Kirsten","David", "Michael", "MarkHol"]
+southmead_group = ["Tim","Frances","MarkHac","Gavin","Amy","Jack","Kirsten","David", "Michael", "MarkHol"]
 uhbw_group = ["HannahW","Morgan","Dowan","John","HannahP", "Gus"]
 
 
