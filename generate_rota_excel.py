@@ -14,7 +14,8 @@ random.seed(42) # Maintain reproducibility across runs
 # TO HANNAH - the spelling of the person must be consistent throughout. And the number of people must also remain consistent
 
 #TO HANNAH - if you can read this line then I have updated the Friday code and saved succesfully as per our messages on 26.11.25 at 17:00
-# Date 08/12 check for commiting changes 
+# Checking if commit changes here whether commits onto the main branch 08/12 
+
 people = [
     "Tim","Frances","MarkHac","Gavin","Amy","Jack",
     "HannahW","Morgan","Dowan","John","HannahP","Kirsten",
