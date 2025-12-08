@@ -16,21 +16,21 @@ random.seed(42) # Maintain reproducibility across runs
 #TO HANNAH - if you can read this line then I have updated the Friday code and saved succesfully as per our messages on 26.11.25 at 17:00
 # Date 08/12 check for commiting changes 
 people = [
-    "Alice","Bob","Charlie","Diana","Ethan","Fiona",
-    "George","Hannah","Ian","Jane","Karl","Liam",
-    "Mona","Nina","Oliver","Paula"
+    "Tim","Frances","MarkHac","Gavin","Amy","Jack",
+    "HannahW","Morgan","Dowan","John","HannahP","Kirsten",
+    "David","Michael","Gus","MarkHol"
 ]
 
 
 work_schedule = {
-    "Alice":    {"week1": [1,2,3,4],     "week2": [0,2,3,4]},    # Alternate Mon/Tuesday off
-    "Bob":      {"week1": [0,1,2,3],   "week2": [0,2,3,4]},  # Alternate Friday, Tuesday off
-    "Charlie":  {"week1": [1,2,3,4],   "week2": [0,1,2,4]},  # Alternate Monday, Thursday off
-    "Diana":    {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Ethan":    {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Fiona":    {"week1": [0,1,2,3],     "week2": [0,1,2,3]},
-    "George":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Hannah":   {"week1": [0,1,2],       "week2": [0,1,2]},
+    "Tim":    {"week1": [0,2,3,4],     "week2": [0,2,3,4]},    # Tues off 
+    "Frances":      {"week1": [2,3,4],   "week2": [2,3,4]},  # Mon and Tues off 
+    "MarkHac":  {"week1": [0,1,3],   "week2": [0,1,3]},  # Weds and Fri off 
+    "Gavin":    {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "Amy":    {"week1": [0,1,2],   "week2": [0,1,2]}, # Thurs and Fri off 
+    "Jack":    {"week1": [0,1,3,4],     "week2": [0,1,3,4]}, #Weds off 
+    "HannahW":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "":   {"week1": [0,1,2],       "week2": [0,1,2]},
     "Ian":      {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
     "Jane":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
     "Karl":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
