@@ -30,15 +30,15 @@ work_schedule = {
     "Amy":    {"week1": [0,1,2],   "week2": [0,1,2]}, # Thurs and Fri off 
     "Jack":    {"week1": [0,1,3,4],     "week2": [0,1,3,4]}, #Weds off 
     "HannahW":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "":   {"week1": [0,1,2],       "week2": [0,1,2]},
-    "Ian":      {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Jane":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Karl":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Liam":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Mona":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Nina":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Oliver":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Paula":    {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "Morgan":   {"week1": [0,1,2],       "week2": [0,1,2]},
+    "Dowan":      {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "John":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "HannahP":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "Kirsten":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "David":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "Michael":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "Gus":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "MarkHol":    {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
 }
 
 #TO HANNAH - ensure everyone is allocated to one site here
