@@ -31,32 +31,31 @@ work_schedule = {
     "Amy":    {"week1": [0,1,2],   "week2": [0,1,2]}, # Thurs and Fri off 
     "Jack":    {"week1": [0,1,3,4],     "week2": [0,1,3,4]}, #Weds off 
     "HannahW":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Morgan":   {"week1": [0,1,2],       "week2": [0,1,2]},
-    "Dowan":      {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "Morgan":   {"week1": [0,2,3,4],       "week2": [0,2,3,4]}, #Tues off 
+    "Dowan":      {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]}, #FOR JACK - Dowan will be having Thurs off from April 
     "John":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "HannahP":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Kirsten":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "David":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Michael":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Gus":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "HannahP":     {"week1": [2,3,4],   "week2": [2,3,4]}, #Mon and Tues off 
+    "Kirsten":     {"week1": [0,1,2,3],   "week2": [0,1,2,3]}, #Friday off 
+    "David":     {"week1": [0,1,2],   "week2": [0,1,2,4]}, #Thurs and Friday off - but keeping 0.8 on calls. 
+    "Michael":     {"week1": [2,3,4],   "week2": [2,3,4]}, #Mon and Tues off 
+    "Gus":   {"week1": [0,1,2,3,4],   "week2": [0,1,3]}, #Will be 50% academic - allocated as 60% then as academic 
     "MarkHol":    {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
 }
 
 #TO HANNAH - ensure everyone is allocated to one site here
 
 # Groups
-southmead_group = ["Alice","Bob","Charlie","Diana","Ethan","Fiona","Karl","Liam"]
-uhbw_group = ["George","Hannah","Ian","Jane","Mona","Nina","Oliver","Paula"]
+southmead_group = ["Tim","Frances","MarckHac","Gavin","Amy","Jack","Kirsten","David", "Michael", "Gus", "MarkHol"]
+uhbw_group = ["HannahW","Morgan","Dowan","John","HannahP"]
 
-#TO HANNAH - only those who can't swap need to be added here
 
 # Cannot swap weekend site
-cannot_swap_weekend_site = ["Alice","Charlie","George","Mona"]
+cannot_swap_weekend_site = ["Frances","John"]
 
 #TO HANNAH - only those in ACF need to be added here
 
 # ACF - needed for reducing their on call frequency
-acf_doctors = ["Fiona", "Hannah", "Liam", "Nina"]
+acf_doctors = ["HannahP", "Amy", "Gus"] #Jack not taking lower FTE for academic. Gus is 50% academic. 
 
 # Example unavailable dates
 
