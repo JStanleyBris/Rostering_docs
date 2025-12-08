@@ -14,7 +14,7 @@ random.seed(42) # Maintain reproducibility across runs
 # TO HANNAH - the spelling of the person must be consistent throughout. And the number of people must also remain consistent
 
 #TO HANNAH - if you can read this line then I have updated the Friday code and saved succesfully as per our messages on 26.11.25 at 17:00
-# TO JACK - if you can read this I have worked out how to save 
+# Date 08/12 check for commiting changes 
 people = [
     "Alice","Bob","Charlie","Diana","Ethan","Fiona",
     "George","Hannah","Ian","Jane","Karl","Liam",
