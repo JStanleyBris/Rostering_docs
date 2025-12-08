@@ -45,8 +45,8 @@ work_schedule = {
 #TO HANNAH - ensure everyone is allocated to one site here
 
 # Groups
-southmead_group = ["Tim","Frances","MarckHac","Gavin","Amy","Jack","Kirsten","David", "Michael", "Gus", "MarkHol"]
-uhbw_group = ["HannahW","Morgan","Dowan","John","HannahP"]
+southmead_group = ["Tim","Frances","MarckHac","Gavin","Amy","Jack","Kirsten","David", "Michael", "MarkHol"]
+uhbw_group = ["HannahW","Morgan","Dowan","John","HannahP", "Gus"]
 
 
 # Cannot swap weekend site
@@ -60,22 +60,35 @@ acf_doctors = ["HannahP", "Amy", "Gus"] #Jack not taking lower FTE for academic.
 # Example unavailable dates
 
 unavailable_dates = {
-    "Alice": {
-        ("2026-03-10", "2026-03-14"): "Annual Leave",  #TO HANNAH - this is how to do date ranges
-        "2026-05-15": "Conference" #TO HANNAH - this is how to do single dates.
+    #"Tim": {
+    #    ("2026-03-10", "2026-03-14"): "Annual Leave",  #TO HANNAH - this is how to do date ranges
+     #   "2026-05-15": "Conference" #TO HANNAH - this is how to do single dates.
+    #}, #Tim - no requested dates 
+    "Frances": {
+        ("2026-02-13", "2026-02-15"): "UA", #UA = unavailable 
+        ("2026-02-20", "2026-02-22"): "UA",
+        ("2026-04-11", "2026-04-16"): "UA",
+        ("2026-05-01", "2026-05-04"): "UA",
+        ("2026-05-22", "2026-05-31"): "UA",
+        ("2026-06-13", "2026-06-14"): "UA",
+        ("2026-06-19", "2026-06-21"): "UA",
+        ("2026-06-26", "2026-07-21"): "UA",
+        
     },
-    "Bob": {
-        "2026-04-22": "Training",
-        ("2026-09-05", "2026-09-06"): "Weekend Away"
+    "MarkHac": {
+        ("2026-03-28", "2026-03-30"): "UA", 
+        ("2026-06-12", "2026-06-14"): "UA", 
+        ("2026-07-03", "2026-07-05"): "UA", 
     },
-    "Charlie": {
-        ("2026-07-01", "2026-07-03"): "Annual Leave"
+    "Gavin": {
+        ("2026-03-16", "2026-04-26"): "UA"
     },
-    "Diana": {
-        ("2026-06-03", "2026-06-07"): "Annual Leave"
-    },
-    "Ethan": {
-        "2026-02-18": "Study Leave"
+    "Amy": {
+         ("2026-03-13", "2026-03-15"): "UA", 
+         ("2026-04-17", "2026-04-21"): "UA", 
+         ("2026-05-22", "2026-06-01"): "UA", 
+         ("2026-07-10", "2026-07-12"): "UA", 
+         ("2026-07-31", "2026-08-02"): "UA"
     },
     "Fiona": {
         "2026-07-12": "Personal Leave",
