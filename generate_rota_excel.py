@@ -91,8 +91,8 @@ unavailable_dates = {
          ("2026-07-31", "2026-08-02"): "UA"
     },
     "Jack": {
-        ("2026-02-02", "2026-02-06"): "UA", 
-        ("2026-02-09", "2026-02-13"): "UA", 
+        ("2026-02-02", "2026-02-08"): "UA", 
+        ("2026-02-09", "2026-02-15"): "UA", 
         ("2026-02-16", "2026-02-20"): "Academic" 
     },
     "HannahW": {
@@ -172,7 +172,7 @@ unavailable_dates = {
     },
 }
 
-#Define a function to handle the dat ranges:
+#Define a function to handle the date ranges:
 
 def expand_unavailable(unavailable):
     expanded = {}
@@ -237,6 +237,25 @@ fte = {
 
 total_fte = sum(fte.values())
 
+#-------------------------
+# Define on call protection
+#------------------------
+
+#Replace with on_call_protection - blanket avoid on calls 4 days before or after any on call
+
+oncall_protection = defaultdict(set)
+
+def protect_around_oncall(person, date):
+    # Protect 4 days BEFORE
+    for i in range(1, 5):
+        d_before = date - timedelta(days=i)
+        oncall_protection[person].add(d_before.strftime("%Y-%m-%d"))
+    # Protect 4 days AFTER
+    for i in range(1, 5):
+        d_after = date + timedelta(days=i)
+        oncall_protection[person].add(d_after.strftime("%Y-%m-%d"))
+
+
 # -------------------------------
 # 4️⃣ Weekend allocation
 # -------------------------------
@@ -275,22 +294,11 @@ for sat, sun in weekend_blocks:
     weekend_rota[sun.strftime("%Y-%m-%d")] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
     weekend_assigned_southmead[chosen_sm] += 1
     weekend_assigned_uhbw[chosen_uh] += 1
-
-# Weekend protection - no on call in the week before/after. I think this protects around BH also but can check
-weekend_protection = defaultdict(set)
-for sat, sun in weekend_blocks:
-    weekend_dates = [sat, sun]
-    for i in range(1,5):
-        d_before = sat - timedelta(days=i)
-        if d_before.weekday() < 5:
-            weekend_dates.append(d_before)
-    for i in range(1,6):
-        d_after = sun + timedelta(days=i)
-        if d_after.weekday() < 5:
-            weekend_dates.append(d_after)
-    for p in [weekend_rota[sat.strftime("%Y-%m-%d")]["Southmead"],
-              weekend_rota[sat.strftime("%Y-%m-%d")]["UHBW"]]:
-        weekend_protection[p].update(d.strftime("%Y-%m-%d") for d in weekend_dates)
+    
+    protect_around_oncall(chosen_sm, sat)
+    protect_around_oncall(chosen_sm, sun)
+    protect_around_oncall(chosen_uh, sat)
+    protect_around_oncall(chosen_uh, sun)
 
 
 # -------------------------------
@@ -308,7 +316,9 @@ for bh_date_str, bh_name in bank_holidays.items():
     
     # Southmead
     available_sm = [p for p in southmead_group if bh_date_str not in unavailable.get(p, {})
-                    and bh_date_str not in weekend_protection.get(p,set())]
+                    and bh_date_str not in oncall_protection.get(p, set())]
+    
+    
     # Use tie-breaker: fewest BH shifts / FTE, then fewest weekend shifts / FTE, then random to avoid systematic bias
     chosen_sm = min(
         available_sm, 
@@ -319,7 +329,8 @@ for bh_date_str, bh_name in bank_holidays.items():
     )
 
     # UHBW
-    available_uh = [p for p in uhbw_group if bh_date_str not in unavailable.get(p, {})]
+    available_uh = [p for p in uhbw_group if bh_date_str not in unavailable.get(p, {})
+                    and bh_date_str not in oncall_protection.get(p, set())]
     chosen_uh = min(
         available_uh, 
         key=lambda x: (bank_holiday_assigned_uhbw[x]/fte[x],
@@ -331,6 +342,10 @@ for bh_date_str, bh_name in bank_holidays.items():
     bank_holiday_rota[bh_date_str] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
     bank_holiday_assigned_sm[chosen_sm] += 1
     bank_holiday_assigned_uhbw[chosen_uh] += 1
+
+    protect_around_oncall(chosen_sm, bh_date)
+    protect_around_oncall(chosen_uh, bh_date)
+
 
 
 #-------------
@@ -358,7 +373,7 @@ for d in all_dates:
         if (
             assigned_friday_counts[p] < target_fridays[p] #\Anyone can do Friday even if not in working pattern
             and date_str not in unavailable.get(p,{})
-            and date_str not in weekend_protection.get(p,set())
+            and date_str not in oncall_protection.get(p,set())
         )
     ]
 
@@ -366,7 +381,7 @@ for d in all_dates:
         working_people = [
             p for p in people
             if date_str not in unavailable.get(p,{}) #anyone can do Friday even if not working pattern
-            and date_str not in weekend_protection.get(p,set())
+            and date_str not in oncall_protection.get(p,set())
         ]
         available_people = sorted(working_people, key=lambda x: assigned_friday_counts[x]/fte[x])
 
@@ -380,6 +395,9 @@ for d in all_dates:
    
     rota[date_str] = chosen
     assigned_friday_counts[chosen] += 1
+
+    protect_around_oncall(chosen, d)
+
 
 
 # -------------------------------
@@ -406,7 +424,7 @@ for d in all_dates:
             d.weekday() in work_schedule[p][week_key]
             and assigned_weekday_counts[p] < target_shifts[p]
             and date_str not in unavailable.get(p,{})
-            and date_str not in weekend_protection.get(p,set())
+            and date_str not in oncall_protection.get(p,set())
         )
     ]
 
@@ -415,9 +433,14 @@ for d in all_dates:
             p for p in people
             if d.weekday() in work_schedule[p][week_key]
             and date_str not in unavailable.get(p,{})
-            and date_str not in weekend_protection.get(p,set())
+            and date_str not in oncall_protection.get(p,set())
         ]
         available_people = sorted(working_people, key=lambda x: assigned_weekday_counts[x]/fte[x])
+        
+        if not available_people: # Extreme case: no one available, mark date - HANNAH - this was causing a crash for some reason
+            rota[date_str] = "No One Available"
+            print(f"⚠️  No one available for {date_str} (weekday)")
+            continue
 
     chosen = min(available_people, 
                  key=lambda x: (
@@ -430,6 +453,8 @@ for d in all_dates:
     )
     rota[date_str] = chosen
     assigned_weekday_counts[chosen] += 1
+
+    protect_around_oncall(chosen, d)
 
 # -------------------------------
 # 6️⃣ Prepare DataFrame
