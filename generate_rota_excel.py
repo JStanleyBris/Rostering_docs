@@ -255,6 +255,13 @@ def protect_around_oncall(person, date):
         d_after = date + timedelta(days=i)
         oncall_protection[person].add(d_after.strftime("%Y-%m-%d"))
 
+#Avoid two weekends in a row
+
+last_weekend_assigned = {}  # person -> Saturday date of last weekend worked
+
+def worked_last_weekend(person, current_saturday):
+    return last_weekend_assigned.get(person) == (current_saturday - timedelta(days=7))
+
 
 # -------------------------------
 # 4️⃣ Weekend allocation
@@ -269,9 +276,12 @@ weekend_rota = {}
 
 for sat, sun in weekend_blocks:
     available_sm = [p for p in southmead_group
-                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
+                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])
+                    and not worked_last_weekend(p, sat)]
+    
     available_uh = [p for p in uhbw_group
-                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
+                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])
+                    and not worked_last_weekend(p, sat)]
     if not available_sm:
         available_sm = [p for p in uhbw_group if p not in cannot_swap_weekend_site
                         and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
@@ -299,6 +309,10 @@ for sat, sun in weekend_blocks:
     protect_around_oncall(chosen_sm, sun)
     protect_around_oncall(chosen_uh, sat)
     protect_around_oncall(chosen_uh, sun)
+
+    last_weekend_assigned[chosen_sm] = sat
+    last_weekend_assigned[chosen_uh] = sat
+
 
 
 # -------------------------------
