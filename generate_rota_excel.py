@@ -262,6 +262,11 @@ last_weekend_assigned = {}  # person -> Saturday date of last weekend worked
 def worked_last_weekend(person, current_saturday):
     return last_weekend_assigned.get(person) == (current_saturday - timedelta(days=7))
 
+def apply_weekend_exclusion(candidates, sat):
+    eligible = [p for p in candidates if not worked_last_weekend(p, sat)]
+    return eligible if eligible else candidates
+
+weekend_assigned = defaultdict(int)
 
 # -------------------------------
 # 4️⃣ Weekend allocation
@@ -276,35 +281,53 @@ weekend_rota = {}
 
 for sat, sun in weekend_blocks:
     available_sm = [p for p in southmead_group
-                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])
-                    and not worked_last_weekend(p, sat)]
-    
+                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) 
+                    for d in [sat,sun])
+                    ]
+
+#No consecutive weekends    
+    available_sm = apply_weekend_exclusion(available_sm, sat)
+
+
     available_uh = [p for p in uhbw_group
-                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])
-                    and not worked_last_weekend(p, sat)]
+                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) 
+                    for d in [sat,sun])
+                    ]
+    
+#No consecutive weekends
+    available_uh = apply_weekend_exclusion(available_uh, sat)
+
+
     if not available_sm:
         available_sm = [p for p in uhbw_group if p not in cannot_swap_weekend_site
                         and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
+        available_sm = apply_weekend_exclusion(available_sm, sat)
+        
+
     if not available_uh:
         available_uh = [p for p in southmead_group if p not in cannot_swap_weekend_site
                         and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
+        available_uh = apply_weekend_exclusion(available_uh, sat) 
+
     chosen_sm = min(
         available_sm, key=lambda x: (
-            weekend_assigned_southmead[x]/fte[x],
+            weekend_assigned[x]/fte[x],
             random.random()) #If tied make it random so that those earliest in an alphabetical list are not disadvantaged
         )
+    
+    available_uh = [p for p in available_uh if p != chosen_sm]
+
     chosen_uh = min(
         available_uh, key=lambda x: (
-            weekend_assigned_uhbw[x]/fte[x],
+            weekend_assigned[x]/fte[x],
             random.random()
             )
     )
 
     weekend_rota[sat.strftime("%Y-%m-%d")] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
     weekend_rota[sun.strftime("%Y-%m-%d")] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
-    weekend_assigned_southmead[chosen_sm] += 1
-    weekend_assigned_uhbw[chosen_uh] += 1
     
+
     protect_around_oncall(chosen_sm, sat)
     protect_around_oncall(chosen_sm, sun)
     protect_around_oncall(chosen_uh, sat)
@@ -312,6 +335,14 @@ for sat, sun in weekend_blocks:
 
     last_weekend_assigned[chosen_sm] = sat
     last_weekend_assigned[chosen_uh] = sat
+
+    weekend_assigned[chosen_sm] += 1
+    weekend_assigned[chosen_uh] += 1
+
+    weekend_assigned_southmead[chosen_sm] += 1
+    weekend_assigned_uhbw[chosen_uh] += 1
+
+
 
 
 
@@ -343,8 +374,11 @@ for bh_date_str, bh_name in bank_holidays.items():
     )
 
     # UHBW
-    available_uh = [p for p in uhbw_group if bh_date_str not in unavailable.get(p, {})
-                    and bh_date_str not in oncall_protection.get(p, set())]
+
+    available_uh = [p for p in uhbw_group 
+                    if bh_date_str not in unavailable.get(p, {})
+                    and bh_date_str not in oncall_protection.get(p, set())
+                    and p != chosen_sm]
     chosen_uh = min(
         available_uh, 
         key=lambda x: (bank_holiday_assigned_uhbw[x]/fte[x],
