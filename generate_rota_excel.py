@@ -262,10 +262,6 @@ last_weekend_assigned = {}  # person -> Saturday date of last weekend worked
 def worked_last_weekend(person, current_saturday):
     return last_weekend_assigned.get(person) == (current_saturday - timedelta(days=7))
 
-def apply_weekend_exclusion(candidates, sat):
-    eligible = [p for p in candidates if not worked_last_weekend(p, sat)]
-    return eligible if eligible else candidates
-
 weekend_assigned = defaultdict(int)
 
 # -------------------------------
@@ -280,34 +276,30 @@ weekend_assigned_uhbw = defaultdict(int)
 weekend_rota = {}
 
 for sat, sun in weekend_blocks:
-    available_sm = [p for p in southmead_group
-                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) 
-                    for d in [sat,sun])
-                    ]
-
-#No consecutive weekends    
-    available_sm = apply_weekend_exclusion(available_sm, sat)
-
-
-    available_uh = [p for p in uhbw_group
-                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) 
-                    for d in [sat,sun])
-                    ]
     
-#No consecutive weekends
-    available_uh = apply_weekend_exclusion(available_uh, sat)
+    globally_eligible = [
+    p for p in people
+    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat, sun])
+    and last_weekend_assigned.get(p) != sat - timedelta(days=7)
+    ]
+    
+    available_sm = [p for p in globally_eligible if p in southmead_group]
+    available_uh = [p for p in globally_eligible if p in uhbw_group]
 
 
     if not available_sm:
-        available_sm = [p for p in uhbw_group if p not in cannot_swap_weekend_site
-                        and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
-        available_sm = apply_weekend_exclusion(available_sm, sat)
+        available_sm = [p for p in uhbw_group if 
+                        p not in cannot_swap_weekend_site
+                        and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])
+                        and last_weekend_assigned.get(p) != sat - timedelta(days=7)]
+        
         
 
     if not available_uh:
-        available_uh = [p for p in southmead_group if p not in cannot_swap_weekend_site
-                        and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
-        available_uh = apply_weekend_exclusion(available_uh, sat) 
+        available_uh = [p for p in southmead_group if 
+                        p not in cannot_swap_weekend_site
+                        and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])
+                        and last_weekend_assigned.get(p) != sat - timedelta(days=7)]
 
     chosen_sm = min(
         available_sm, key=lambda x: (
@@ -341,9 +333,6 @@ for sat, sun in weekend_blocks:
 
     weekend_assigned_southmead[chosen_sm] += 1
     weekend_assigned_uhbw[chosen_uh] += 1
-
-
-
 
 
 # -------------------------------
