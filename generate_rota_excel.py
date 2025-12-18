@@ -265,74 +265,54 @@ def worked_last_weekend(person, current_saturday):
 weekend_assigned = defaultdict(int)
 
 # -------------------------------
-# 4️⃣ Weekend allocation
+# 4️⃣ Weekend allocation (improved)
 # -------------------------------
-weekend_blocks = [(d, d + timedelta(days=1)) for d in all_dates if d.weekday()==5 and (d+timedelta(days=1))<=end_date]
-total_weekends = len(weekend_blocks)*2
-target_weekends = {p: total_weekends*(fte[p]/total_fte) for p in people}
+weekend_blocks = [(d, d + timedelta(days=1)) for d in all_dates if d.weekday() == 5 and (d + timedelta(days=1)) <= end_date]
+total_weekends = len(weekend_blocks) * 2
+target_weekends = {p: total_weekends * (fte[p] / total_fte) for p in people}
 
-weekend_assigned_southmead = defaultdict(int)
-weekend_assigned_uhbw = defaultdict(int)
+weekend_assigned = defaultdict(int)
+last_weekend_assigned = {}
+
 weekend_rota = {}
 
 for sat, sun in weekend_blocks:
     
-    globally_eligible = [
-    p for p in people
-    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat, sun])
-    and last_weekend_assigned.get(p) != sat - timedelta(days=7)
+    # Recompute eligibility dynamically for this weekend
+    eligible_sm = [
+        p for p in southmead_group
+        if all(d.strftime("%Y-%m-%d") not in unavailable.get(p, {}) for d in [sat, sun])
+        and last_weekend_assigned.get(p) != sat - timedelta(days=7)
+        and weekend_assigned[p] < target_weekends[p]
     ]
-    
-    available_sm = [p for p in globally_eligible if p in southmead_group]
-    available_uh = [p for p in globally_eligible if p in uhbw_group]
 
+    eligible_uh = [
+        p for p in uhbw_group
+        if all(d.strftime("%Y-%m-%d") not in unavailable.get(p, {}) for d in [sat, sun])
+        and last_weekend_assigned.get(p) != sat - timedelta(days=7)
+        and weekend_assigned[p] < target_weekends[p]
+    ]
 
-    if not available_sm:
-        available_sm = [p for p in uhbw_group if 
-                        p not in cannot_swap_weekend_site
-                        and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])
-                        and last_weekend_assigned.get(p) != sat - timedelta(days=7)]
-        
-        
+    # Fallback: use cannot_swap_weekend_site if no eligible people
+    if not eligible_sm:
+        eligible_sm = [p for p in uhbw_group if p not in cannot_swap_weekend_site]
+    if not eligible_uh:
+        eligible_uh = [p for p in southmead_group if p not in cannot_swap_weekend_site]
 
-    if not available_uh:
-        available_uh = [p for p in southmead_group if 
-                        p not in cannot_swap_weekend_site
-                        and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])
-                        and last_weekend_assigned.get(p) != sat - timedelta(days=7)]
+    # Choose people with lowest ratio of assigned weekends to FTE, break ties randomly
+    chosen_sm = min(eligible_sm, key=lambda p: (weekend_assigned[p] / fte[p], random.random()))
+    eligible_uh = [p for p in eligible_uh if p != chosen_sm]  # prevent same person in both sites
+    chosen_uh = min(eligible_uh, key=lambda p: (weekend_assigned[p] / fte[p], random.random()))
 
-    chosen_sm = min(
-        available_sm, key=lambda x: (
-            weekend_assigned[x]/fte[x],
-            random.random()) #If tied make it random so that those earliest in an alphabetical list are not disadvantaged
-        )
-    
-    available_uh = [p for p in available_uh if p != chosen_sm]
-
-    chosen_uh = min(
-        available_uh, key=lambda x: (
-            weekend_assigned[x]/fte[x],
-            random.random()
-            )
-    )
-
+    # Assign to rota
     weekend_rota[sat.strftime("%Y-%m-%d")] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
     weekend_rota[sun.strftime("%Y-%m-%d")] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
-    
 
-    protect_around_oncall(chosen_sm, sat)
-    protect_around_oncall(chosen_sm, sun)
-    protect_around_oncall(chosen_uh, sat)
-    protect_around_oncall(chosen_uh, sun)
-
-    last_weekend_assigned[chosen_sm] = sat
-    last_weekend_assigned[chosen_uh] = sat
-
+    # Update tracking
     weekend_assigned[chosen_sm] += 1
     weekend_assigned[chosen_uh] += 1
-
-    weekend_assigned_southmead[chosen_sm] += 1
-    weekend_assigned_uhbw[chosen_uh] += 1
+    last_weekend_assigned[chosen_sm] = sat
+    last_weekend_assigned[chosen_uh] = sat
 
 
 # -------------------------------
@@ -357,7 +337,7 @@ for bh_date_str, bh_name in bank_holidays.items():
     chosen_sm = min(
         available_sm, 
         key=lambda x: (bank_holiday_assigned_sm[x]/fte[x],
-                       (weekend_assigned_southmead[x] + weekend_assigned_uhbw.get(x,0))/fte[x],
+                       weekend_assigned[x]/fte[x],
                        random.random()
         )
     )
@@ -371,7 +351,7 @@ for bh_date_str, bh_name in bank_holidays.items():
     chosen_uh = min(
         available_uh, 
         key=lambda x: (bank_holiday_assigned_uhbw[x]/fte[x],
-                       (weekend_assigned_uhbw[x] + weekend_assigned_southmead.get(x,0))/fte[x],
+                       weekend_assigned[x]/fte[x],
                        random.random()
         )
     )
@@ -425,7 +405,7 @@ for d in all_dates:
     chosen = min(available_people, 
                  key=lambda x: (assigned_friday_counts[x]/fte[x],
                                       (bank_holiday_assigned_uhbw[x] + bank_holiday_assigned_sm.get(x,0))/fte[x],
-                                       (weekend_assigned_uhbw[x] + weekend_assigned_southmead.get(x,0))/fte[x],
+                                       weekend_assigned[x]/fte[x],
                                        random.random()
                                 )
     )
@@ -484,7 +464,7 @@ for d in all_dates:
                      assigned_weekday_counts[x]/fte[x],
                      assigned_friday_counts[x]/fte[x],
                      (bank_holiday_assigned_uhbw[x] + bank_holiday_assigned_sm.get(x,0))/fte[x],
-                     (weekend_assigned_uhbw[x] + weekend_assigned_southmead.get(x,0))/fte[x],
+                     weekend_assigned[x]/fte[x],
                      random.random()
                      )
     )
@@ -581,7 +561,7 @@ for p in people:
     fte_pct = round(fte[p] * 100)
     acf_label = "ACF" if p in acf_doctors else ""
 
-    total_weekends_p = weekend_assigned_southmead.get(p, 0) + weekend_assigned_uhbw.get(p, 0)
+    total_weekends_p = weekend_assigned.get(p, 0)
     total_bh_p = bank_holiday_assigned_sm.get(p, 0) + bank_holiday_assigned_uhbw.get(p, 0)
     total_friday_p = assigned_friday_counts.get(p, 0)
     total_weekday_p = assigned_weekday_counts.get(p, 0)
