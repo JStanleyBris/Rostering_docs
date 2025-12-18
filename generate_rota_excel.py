@@ -14,7 +14,8 @@ random.seed(42) # Maintain reproducibility across runs
 # TO HANNAH - the spelling of the person must be consistent throughout. And the number of people must also remain consistent
 
 #TO HANNAH - if you can read this line then I have updated the Friday code and saved succesfully as per our messages on 26.11.25 at 17:00
-# Date 08/12 check for commiting changes 
+# Checking if commit changes here whether commits onto the main branch 08/12 
+
 people = [
     "Tim","Frances","MarkHac","Gavin","Amy","Jack",
     "HannahW","Morgan","Dowan","John","HannahP","Kirsten",
@@ -30,91 +31,148 @@ work_schedule = {
     "Amy":    {"week1": [0,1,2],   "week2": [0,1,2]}, # Thurs and Fri off 
     "Jack":    {"week1": [0,1,3,4],     "week2": [0,1,3,4]}, #Weds off 
     "HannahW":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "":   {"week1": [0,1,2],       "week2": [0,1,2]},
-    "Ian":      {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Jane":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Karl":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Liam":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Mona":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Nina":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Oliver":   {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
-    "Paula":    {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "Morgan":   {"week1": [0,2,3,4],       "week2": [0,2,3,4]}, #Tues off 
+    "Dowan":      {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]}, #FOR JACK - Dowan will be having Thurs off from April 
+    "John":     {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
+    "HannahP":     {"week1": [2,3,4],   "week2": [2,3,4]}, #Mon and Tues off 
+    "Kirsten":     {"week1": [0,1,2,3],   "week2": [0,1,2,3]}, #Friday off 
+    "David":     {"week1": [0,1,2],   "week2": [0,1,2,4]}, #Thurs and Friday off - but keeping 0.8 on calls. 
+    "Michael":     {"week1": [2,3,4],   "week2": [2,3,4]}, #Mon and Tues off 
+    "Gus":   {"week1": [0,1,2,3,4],   "week2": [0,1,3]}, #Will be 50% academic - allocated as 60% then as academic 
+    "MarkHol":    {"week1": [0,1,2,3,4],   "week2": [0,1,2,3,4]},
 }
 
 #TO HANNAH - ensure everyone is allocated to one site here
 
 # Groups
-southmead_group = ["Alice","Bob","Charlie","Diana","Ethan","Fiona","Karl","Liam"]
-uhbw_group = ["George","Hannah","Ian","Jane","Mona","Nina","Oliver","Paula"]
+southmead_group = ["Tim","Frances","MarkHac","Gavin","Amy","Jack","Kirsten","David", "Michael", "MarkHol"]
+uhbw_group = ["HannahW","Morgan","Dowan","John","HannahP", "Gus"]
 
-#TO HANNAH - only those who can't swap need to be added here
 
 # Cannot swap weekend site
-cannot_swap_weekend_site = ["Alice","Charlie","George","Mona"]
+cannot_swap_weekend_site = ["Frances","John"]
 
 #TO HANNAH - only those in ACF need to be added here
 
 # ACF - needed for reducing their on call frequency
-acf_doctors = ["Fiona", "Hannah", "Liam", "Nina"]
+acf_doctors = ["HannahP", "Amy", "Gus"] #Jack not taking lower FTE for academic. Gus is 50% academic. 
 
 # Example unavailable dates
 
 unavailable_dates = {
-    "Alice": {
-        ("2026-03-10", "2026-03-14"): "Annual Leave",  #TO HANNAH - this is how to do date ranges
-        "2026-05-15": "Conference" #TO HANNAH - this is how to do single dates.
+    #"Tim": {
+    #    ("2026-03-10", "2026-03-14"): "Annual Leave",  #TO HANNAH - this is how to do date ranges
+     #   "2026-05-15": "Conference" #TO HANNAH - this is how to do single dates.
+    #}, #Tim - no requested dates 
+    "Frances": {
+        ("2026-02-13", "2026-02-15"): "UA", #UA = unavailable 
+        ("2026-02-20", "2026-02-22"): "UA",
+        ("2026-04-11", "2026-04-16"): "UA",
+        ("2026-05-01", "2026-05-04"): "UA",
+        ("2026-05-22", "2026-05-31"): "UA",
+        ("2026-06-13", "2026-06-14"): "UA",
+        ("2026-06-19", "2026-06-21"): "UA",
+        ("2026-06-26", "2026-07-21"): "UA"
+        
     },
-    "Bob": {
-        "2026-04-22": "Training",
-        ("2026-09-05", "2026-09-06"): "Weekend Away"
+    "MarkHac": {
+        ("2026-03-28", "2026-03-30"): "UA", 
+        ("2026-06-12", "2026-06-14"): "UA", 
+        ("2026-07-03", "2026-07-05"): "UA"
     },
-    "Charlie": {
-        ("2026-07-01", "2026-07-03"): "Annual Leave"
+    "Gavin": {
+        ("2026-03-16", "2026-04-26"): "UA"
     },
-    "Diana": {
-        ("2026-06-03", "2026-06-07"): "Annual Leave"
+    "Amy": {
+         ("2026-03-13", "2026-03-15"): "UA", 
+         ("2026-04-17", "2026-04-21"): "UA", 
+         ("2026-05-22", "2026-06-01"): "UA", 
+         ("2026-07-10", "2026-07-12"): "UA", 
+         ("2026-07-31", "2026-08-02"): "UA"
     },
-    "Ethan": {
-        "2026-02-18": "Study Leave"
+    "Jack": {
+        ("2026-02-02", "2026-02-08"): "UA", 
+        ("2026-02-09", "2026-02-15"): "UA", 
+        ("2026-02-16", "2026-02-20"): "Academic" 
     },
-    "Fiona": {
-        "2026-07-12": "Personal Leave",
-        ("2026-11-20", "2026-11-22"): "Conference"
+    "HannahW": {
+        ("2026-03-13", "2026-03-17"): "UA", 
+        ("2026-04-10", "2026-04-27"): "UA", 
+        ("2026-05-01", "2026-05-04"): "UA", 
+        ("2026-05-29", "2026-06-08"): "UA", 
+        ("2026-06-18", "2026-06-22"): "UA", 
+        ("2026-07-15", "2026-07-23"): "UA", 
+        ("2026-07-31", "2026-08-05"): "UA"
     },
-    "George": {
-        ("2026-05-01", "2026-05-03"): "Annual Leave"
+    "Morgan": {
+        ("2026-03-16", "2026-06-20"): "UA", 
+        ("2026-04-10", "2026-04-25"): "UA", 
+        ("2026-05-08", "2026-05-10"): "UA"
     },
-    "Hannah": {
-        ("2026-02-25", "2026-02-28"): "Sick Leave"
+    "Dowan": {
+        "2026-02-27": "UA",
+        ("2026-03-02", "2026-03-13"): "UA"
     },
-    "Ian": {
-        "2026-06-10": "Training"
+    #"John": {                                        #No unavailability 
+     #   "2026-04-08": "Conference",
+      #  ("2026-12-23", "2026-12-27"): "Christmas Leave" 
+    #},
+    "HannahP": {
+        "2026-02-27": "UA",
+        "2026-03-09": "UA",
+        ("2026-04-06", "2026-04-27"): "UA"
     },
-    "Jane": {
-        "2026-04-08": "Conference",
-        ("2026-12-23", "2026-12-27"): "Christmas Leave"
+    "Gus": {
+        ("2026-06-01", "2026-08-05"): "OffRota"
     },
-    "Karl": {
-        ("2026-03-20", "2026-03-22"): "Annual Leave"
+    "Kirsten": {
+        "2026-02-09": "UA",
+        ("2026-02-14", "2026-02-22"): "UA", 
+        "2026-02-28": "UA",
+        "2026-03-12": "UA",
+        ("2026-03-21", "2026-03-22"): "UA",
+        ("2026-03-28", "2026-03-29"): "UA",
+        "2026-04-02": "UA",
+        ("2026-04-13", "2026-04-21"): "UA",
+        ("2026-04-27", "2026-04-29"): "UA",
+         "2026-05-11": "UA",
+         "2026-05-25": "UA",
+         ("2026-05-30", "2026-05-31"): "UA",
+         ("2026-06-02", "2026-06-04"): "UA",
+          "2026-07-03": "UA",
+          "2026-07-07": "UA",
+        "2026-07-14": "UA",
+        "2026-07-20": "UA",
+        ("2026-07-25", "2026-07-30"): "UA"
     },
-    "Liam": {
-        ("2026-08-15", "2026-08-19"): "Annual Leave"
+    "David": {
+        ("2026-02-14", "2026-02-22"): "UA", 
+        ("2026-03-09", "2026-03-13"): "UA", 
+        ("2026-04-10", "2026-04-19"): "UA", 
+        ("2026-05-23", "2026-05-31"): "UA", 
+        ("2026-06-30", "2026-07-02"): "UA"
     },
-    "Mona": {
-        "2026-10-03": "Wedding"
+    "Michael": {
+        ("2026-02-06", "2026-02-08"): "UA",
+        "2026-02-21": "UA",
+        ("2026-03-05", "2026-03-08"): "UA",
+        ("2026-03-13", "2026-03-15"): "UA",
+        ("2026-03-21", "2026-03-22"): "UA",
+        ("2026-04-16", "2026-04-19"): "UA",
+        ("2026-04-24", "2026-04-26"): "UA",
+        ("2026-05-23", "2026-05-31"): "UA"
     },
-    "Nina": {
-        ("2026-05-10", "2026-05-12"): "Sick Leave"
-    },
-    "Oliver": {
-        ("2026-01-02", "2026-01-04"): "New Year Leave"
-    },
-    "Paula": {
-        ("2026-09-14", "2026-09-18"): "Annual Leave"
+    "MarkHol": {
+        ("2026-04-03", "2026-04-06"): "UA",
+        ("2026-05-01", "2026-05-04"): "UA",
+        ("2026-05-21", "2026-05-31"): "UA",
+        ("2026-06-19", "2026-06-28"): "UA",
+        ("2026-06-23", "2026-06-26"): "UA"
+        
     },
 }
 
-#Define a function to handle the dat ranges:
+#Define a function to handle the date ranges:
 
 def expand_unavailable(unavailable):
     expanded = {}
@@ -145,14 +203,10 @@ unavailable = expand_unavailable(unavailable_dates)
 #TO HANNAH - update this to reflect the days BH cover is needed
 
 bank_holidays = {
-    "2026-01-01": "New Year's Day",
     "2026-04-03": "Good Friday",
     "2026-04-06": "Easter Monday",
     "2026-05-04": "Early May Bank Holiday",
-    "2026-05-25": "Spring Bank Holiday",
-    "2026-08-31": "Summer Bank Holiday",
-    "2026-12-25": "Christmas Day",
-    "2026-12-28": "Boxing Day (substitute)"
+    "2026-05-25": "Spring Bank Holiday"
 }
 
 #TO HANNAH - this is start/end date
@@ -183,60 +237,82 @@ fte = {
 
 total_fte = sum(fte.values())
 
-# -------------------------------
-# 4️⃣ Weekend allocation
-# -------------------------------
-weekend_blocks = [(d, d + timedelta(days=1)) for d in all_dates if d.weekday()==5 and (d+timedelta(days=1))<=end_date]
-total_weekends = len(weekend_blocks)*2
-target_weekends = {p: total_weekends*(fte[p]/total_fte) for p in people}
+#-------------------------
+# Define on call protection
+#------------------------
 
-weekend_assigned_southmead = defaultdict(int)
-weekend_assigned_uhbw = defaultdict(int)
+#Replace with on_call_protection - blanket avoid on calls 4 days before or after any on call
+
+oncall_protection = defaultdict(set)
+
+def protect_around_oncall(person, date):
+    # Protect 4 days BEFORE
+    for i in range(1, 5):
+        d_before = date - timedelta(days=i)
+        oncall_protection[person].add(d_before.strftime("%Y-%m-%d"))
+    # Protect 4 days AFTER
+    for i in range(1, 5):
+        d_after = date + timedelta(days=i)
+        oncall_protection[person].add(d_after.strftime("%Y-%m-%d"))
+
+#Avoid two weekends in a row
+
+last_weekend_assigned = {}  # person -> Saturday date of last weekend worked
+
+def worked_last_weekend(person, current_saturday):
+    return last_weekend_assigned.get(person) == (current_saturday - timedelta(days=7))
+
+weekend_assigned = defaultdict(int)
+
+# -------------------------------
+# 4️⃣ Weekend allocation (improved)
+# -------------------------------
+weekend_blocks = [(d, d + timedelta(days=1)) for d in all_dates if d.weekday() == 5 and (d + timedelta(days=1)) <= end_date]
+total_weekends = len(weekend_blocks) * 2
+target_weekends = {p: total_weekends * (fte[p] / total_fte) for p in people}
+
+weekend_assigned = defaultdict(int)
+last_weekend_assigned = {}
+
 weekend_rota = {}
 
 for sat, sun in weekend_blocks:
-    available_sm = [p for p in southmead_group
-                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
-    available_uh = [p for p in uhbw_group
-                    if all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
-    if not available_sm:
-        available_sm = [p for p in uhbw_group if p not in cannot_swap_weekend_site
-                        and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
-    if not available_uh:
-        available_uh = [p for p in southmead_group if p not in cannot_swap_weekend_site
-                        and all(d.strftime("%Y-%m-%d") not in unavailable.get(p,{}) for d in [sat,sun])]
-    chosen_sm = min(
-        available_sm, key=lambda x: (
-            weekend_assigned_southmead[x]/fte[x],
-            random.random()) #If tied make it random so that those earliest in an alphabetical list are not disadvantaged
-        )
-    chosen_uh = min(
-        available_uh, key=lambda x: (
-            weekend_assigned_uhbw[x]/fte[x],
-            random.random()
-            )
-    )
+    
+    # Recompute eligibility dynamically for this weekend
+    eligible_sm = [
+        p for p in southmead_group
+        if all(d.strftime("%Y-%m-%d") not in unavailable.get(p, {}) for d in [sat, sun])
+        and last_weekend_assigned.get(p) != sat - timedelta(days=7)
+        and weekend_assigned[p] < target_weekends[p]
+    ]
 
+    eligible_uh = [
+        p for p in uhbw_group
+        if all(d.strftime("%Y-%m-%d") not in unavailable.get(p, {}) for d in [sat, sun])
+        and last_weekend_assigned.get(p) != sat - timedelta(days=7)
+        and weekend_assigned[p] < target_weekends[p]
+    ]
+
+    # Fallback: use cannot_swap_weekend_site if no eligible people
+    if not eligible_sm:
+        eligible_sm = [p for p in uhbw_group if p not in cannot_swap_weekend_site]
+    if not eligible_uh:
+        eligible_uh = [p for p in southmead_group if p not in cannot_swap_weekend_site]
+
+    # Choose people with lowest ratio of assigned weekends to FTE, break ties randomly
+    chosen_sm = min(eligible_sm, key=lambda p: (weekend_assigned[p] / fte[p], random.random()))
+    eligible_uh = [p for p in eligible_uh if p != chosen_sm]  # prevent same person in both sites
+    chosen_uh = min(eligible_uh, key=lambda p: (weekend_assigned[p] / fte[p], random.random()))
+
+    # Assign to rota
     weekend_rota[sat.strftime("%Y-%m-%d")] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
     weekend_rota[sun.strftime("%Y-%m-%d")] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
-    weekend_assigned_southmead[chosen_sm] += 1
-    weekend_assigned_uhbw[chosen_uh] += 1
 
-# Weekend protection - no on call in the week before/after. I think this protects around BH also but can check
-weekend_protection = defaultdict(set)
-for sat, sun in weekend_blocks:
-    weekend_dates = [sat, sun]
-    for i in range(1,5):
-        d_before = sat - timedelta(days=i)
-        if d_before.weekday() < 5:
-            weekend_dates.append(d_before)
-    for i in range(1,6):
-        d_after = sun + timedelta(days=i)
-        if d_after.weekday() < 5:
-            weekend_dates.append(d_after)
-    for p in [weekend_rota[sat.strftime("%Y-%m-%d")]["Southmead"],
-              weekend_rota[sat.strftime("%Y-%m-%d")]["UHBW"]]:
-        weekend_protection[p].update(d.strftime("%Y-%m-%d") for d in weekend_dates)
+    # Update tracking
+    weekend_assigned[chosen_sm] += 1
+    weekend_assigned[chosen_uh] += 1
+    last_weekend_assigned[chosen_sm] = sat
+    last_weekend_assigned[chosen_uh] = sat
 
 
 # -------------------------------
@@ -254,22 +330,28 @@ for bh_date_str, bh_name in bank_holidays.items():
     
     # Southmead
     available_sm = [p for p in southmead_group if bh_date_str not in unavailable.get(p, {})
-                    and bh_date_str not in weekend_protection.get(p,set())]
+                    and bh_date_str not in oncall_protection.get(p, set())]
+    
+    
     # Use tie-breaker: fewest BH shifts / FTE, then fewest weekend shifts / FTE, then random to avoid systematic bias
     chosen_sm = min(
         available_sm, 
         key=lambda x: (bank_holiday_assigned_sm[x]/fte[x],
-                       (weekend_assigned_southmead[x] + weekend_assigned_uhbw.get(x,0))/fte[x],
+                       weekend_assigned[x]/fte[x],
                        random.random()
         )
     )
 
     # UHBW
-    available_uh = [p for p in uhbw_group if bh_date_str not in unavailable.get(p, {})]
+
+    available_uh = [p for p in uhbw_group 
+                    if bh_date_str not in unavailable.get(p, {})
+                    and bh_date_str not in oncall_protection.get(p, set())
+                    and p != chosen_sm]
     chosen_uh = min(
         available_uh, 
         key=lambda x: (bank_holiday_assigned_uhbw[x]/fte[x],
-                       (weekend_assigned_uhbw[x] + weekend_assigned_southmead.get(x,0))/fte[x],
+                       weekend_assigned[x]/fte[x],
                        random.random()
         )
     )
@@ -277,6 +359,10 @@ for bh_date_str, bh_name in bank_holidays.items():
     bank_holiday_rota[bh_date_str] = {"Southmead": chosen_sm, "UHBW": chosen_uh}
     bank_holiday_assigned_sm[chosen_sm] += 1
     bank_holiday_assigned_uhbw[chosen_uh] += 1
+
+    protect_around_oncall(chosen_sm, bh_date)
+    protect_around_oncall(chosen_uh, bh_date)
+
 
 
 #-------------
@@ -304,7 +390,7 @@ for d in all_dates:
         if (
             assigned_friday_counts[p] < target_fridays[p] #\Anyone can do Friday even if not in working pattern
             and date_str not in unavailable.get(p,{})
-            and date_str not in weekend_protection.get(p,set())
+            and date_str not in oncall_protection.get(p,set())
         )
     ]
 
@@ -312,20 +398,23 @@ for d in all_dates:
         working_people = [
             p for p in people
             if date_str not in unavailable.get(p,{}) #anyone can do Friday even if not working pattern
-            and date_str not in weekend_protection.get(p,set())
+            and date_str not in oncall_protection.get(p,set())
         ]
         available_people = sorted(working_people, key=lambda x: assigned_friday_counts[x]/fte[x])
 
     chosen = min(available_people, 
                  key=lambda x: (assigned_friday_counts[x]/fte[x],
                                       (bank_holiday_assigned_uhbw[x] + bank_holiday_assigned_sm.get(x,0))/fte[x],
-                                       (weekend_assigned_uhbw[x] + weekend_assigned_southmead.get(x,0))/fte[x],
+                                       weekend_assigned[x]/fte[x],
                                        random.random()
                                 )
     )
    
     rota[date_str] = chosen
     assigned_friday_counts[chosen] += 1
+
+    protect_around_oncall(chosen, d)
+
 
 
 # -------------------------------
@@ -352,7 +441,7 @@ for d in all_dates:
             d.weekday() in work_schedule[p][week_key]
             and assigned_weekday_counts[p] < target_shifts[p]
             and date_str not in unavailable.get(p,{})
-            and date_str not in weekend_protection.get(p,set())
+            and date_str not in oncall_protection.get(p,set())
         )
     ]
 
@@ -361,21 +450,28 @@ for d in all_dates:
             p for p in people
             if d.weekday() in work_schedule[p][week_key]
             and date_str not in unavailable.get(p,{})
-            and date_str not in weekend_protection.get(p,set())
+            and date_str not in oncall_protection.get(p,set())
         ]
         available_people = sorted(working_people, key=lambda x: assigned_weekday_counts[x]/fte[x])
+        
+        if not available_people: # Extreme case: no one available, mark date - HANNAH - this was causing a crash for some reason
+            rota[date_str] = "No One Available"
+            print(f"⚠️  No one available for {date_str} (weekday)")
+            continue
 
     chosen = min(available_people, 
                  key=lambda x: (
                      assigned_weekday_counts[x]/fte[x],
                      assigned_friday_counts[x]/fte[x],
                      (bank_holiday_assigned_uhbw[x] + bank_holiday_assigned_sm.get(x,0))/fte[x],
-                     (weekend_assigned_uhbw[x] + weekend_assigned_southmead.get(x,0))/fte[x],
+                     weekend_assigned[x]/fte[x],
                      random.random()
                      )
     )
     rota[date_str] = chosen
     assigned_weekday_counts[chosen] += 1
+
+    protect_around_oncall(chosen, d)
 
 # -------------------------------
 # 6️⃣ Prepare DataFrame
@@ -465,7 +561,7 @@ for p in people:
     fte_pct = round(fte[p] * 100)
     acf_label = "ACF" if p in acf_doctors else ""
 
-    total_weekends_p = weekend_assigned_southmead.get(p, 0) + weekend_assigned_uhbw.get(p, 0)
+    total_weekends_p = weekend_assigned.get(p, 0)
     total_bh_p = bank_holiday_assigned_sm.get(p, 0) + bank_holiday_assigned_uhbw.get(p, 0)
     total_friday_p = assigned_friday_counts.get(p, 0)
     total_weekday_p = assigned_weekday_counts.get(p, 0)
