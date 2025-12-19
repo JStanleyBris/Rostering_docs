@@ -4,6 +4,7 @@ from collections import defaultdict
 import openpyxl
 from openpyxl.styles import PatternFill
 import random
+import math
 random.seed(42) # Maintain reproducibility across runs
 
 # -------------------------------
@@ -105,7 +106,7 @@ unavailable_dates = {
         ("2026-07-31", "2026-08-05"): "UA"
     },
     "Morgan": {
-        ("2026-03-16", "2026-06-20"): "UA", 
+        ("2026-03-16", "2026-03-20"): "UA", 
         ("2026-04-10", "2026-04-25"): "UA", 
         ("2026-05-08", "2026-05-10"): "UA"
     },
@@ -265,11 +266,30 @@ def worked_last_weekend(person, current_saturday):
 weekend_assigned = defaultdict(int)
 
 # -------------------------------
-# 4️⃣ Weekend allocation (improved)
+# Helper function for proportional allocation
+# -------------------------------
+def calculate_minimum_allocation(target_dict):
+    """
+    Calculate minimum allocation (rounded up) for each person.
+    This ensures everyone gets at least their proportional share.
+    """
+    return {person: math.ceil(target) for person, target in target_dict.items()}
+
+def has_reached_minimum(person, assigned_count, minimum_dict):
+    """Check if person has reached their minimum allocation."""
+    return assigned_count >= minimum_dict.get(person, 0)
+
+def all_have_minimum(people_list, assigned_dict, minimum_dict):
+    """Check if all people in the list have reached their minimum allocation."""
+    return all(assigned_dict.get(p, 0) >= minimum_dict.get(p, 0) for p in people_list)
+
+# -------------------------------
+# 4️⃣ Weekend allocation (improved with two-phase approach)
 # -------------------------------
 weekend_blocks = [(d, d + timedelta(days=1)) for d in all_dates if d.weekday() == 5 and (d + timedelta(days=1)) <= end_date]
 total_weekends = len(weekend_blocks) * 2
 target_weekends = {p: total_weekends * (fte[p] / total_fte) for p in people}
+minimum_weekends = calculate_minimum_allocation(target_weekends)
 
 weekend_assigned = defaultdict(int)
 last_weekend_assigned = {}
@@ -278,20 +298,38 @@ weekend_rota = {}
 
 for sat, sun in weekend_blocks:
     
-    # Recompute eligibility dynamically for this weekend
+    # Phase 1: Prioritize people below minimum allocation
+    # Phase 2: Once everyone has minimum, distribute fairly by ratio
+    
+    # Check if all in each group have reached minimum
+    sm_all_have_min = all_have_minimum(southmead_group, weekend_assigned, minimum_weekends)
+    uh_all_have_min = all_have_minimum(uhbw_group, weekend_assigned, minimum_weekends)
+    
+    # Southmead eligibility
     eligible_sm = [
         p for p in southmead_group
         if all(d.strftime("%Y-%m-%d") not in unavailable.get(p, {}) for d in [sat, sun])
         and last_weekend_assigned.get(p) != sat - timedelta(days=7)
-        and weekend_assigned[p] < target_weekends[p]
     ]
+    
+    # Filter by minimum if not everyone has reached it
+    if not sm_all_have_min:
+        below_min_sm = [p for p in eligible_sm if not has_reached_minimum(p, weekend_assigned[p], minimum_weekends)]
+        if below_min_sm:
+            eligible_sm = below_min_sm
 
+    # UHBW eligibility
     eligible_uh = [
         p for p in uhbw_group
         if all(d.strftime("%Y-%m-%d") not in unavailable.get(p, {}) for d in [sat, sun])
         and last_weekend_assigned.get(p) != sat - timedelta(days=7)
-        and weekend_assigned[p] < target_weekends[p]
     ]
+    
+    # Filter by minimum if not everyone has reached it
+    if not uh_all_have_min:
+        below_min_uh = [p for p in eligible_uh if not has_reached_minimum(p, weekend_assigned[p], minimum_weekends)]
+        if below_min_uh:
+            eligible_uh = below_min_uh
 
     # Fallback: use cannot_swap_weekend_site if no eligible people
     if not eligible_sm:
@@ -316,7 +354,7 @@ for sat, sun in weekend_blocks:
 
 
 # -------------------------------
-# 5a️⃣ Bank holiday allocation (separate from weekdays)
+# 5a️⃣ Bank holiday allocation (with two-phase approach)
 # -------------------------------
 bank_holiday_rota = {}
 bank_holiday_assigned_sm = defaultdict(int)
@@ -324,14 +362,24 @@ bank_holiday_assigned_uhbw = defaultdict(int)
 
 total_bh = len(bank_holidays)*2
 target_bh = {p: total_bh*(fte[p]/total_fte) for p in people}
+minimum_bh = calculate_minimum_allocation(target_bh)
 
 for bh_date_str, bh_name in bank_holidays.items():
     bh_date = datetime.strptime(bh_date_str, "%Y-%m-%d")
+    
+    # Check if all in each group have reached minimum
+    sm_all_have_min_bh = all_have_minimum(southmead_group, bank_holiday_assigned_sm, minimum_bh)
+    uh_all_have_min_bh = all_have_minimum(uhbw_group, bank_holiday_assigned_uhbw, minimum_bh)
     
     # Southmead
     available_sm = [p for p in southmead_group if bh_date_str not in unavailable.get(p, {})
                     and bh_date_str not in oncall_protection.get(p, set())]
     
+    # Phase 1: Prioritize people below minimum
+    if not sm_all_have_min_bh:
+        below_min_sm = [p for p in available_sm if not has_reached_minimum(p, bank_holiday_assigned_sm[p], minimum_bh)]
+        if below_min_sm:
+            available_sm = below_min_sm
     
     # Use tie-breaker: fewest BH shifts / FTE, then fewest weekend shifts / FTE, then random to avoid systematic bias
     chosen_sm = min(
@@ -343,11 +391,17 @@ for bh_date_str, bh_name in bank_holidays.items():
     )
 
     # UHBW
-
     available_uh = [p for p in uhbw_group 
                     if bh_date_str not in unavailable.get(p, {})
                     and bh_date_str not in oncall_protection.get(p, set())
                     and p != chosen_sm]
+    
+    # Phase 1: Prioritize people below minimum
+    if not uh_all_have_min_bh:
+        below_min_uh = [p for p in available_uh if not has_reached_minimum(p, bank_holiday_assigned_uhbw[p], minimum_bh)]
+        if below_min_uh:
+            available_uh = below_min_uh
+    
     chosen_uh = min(
         available_uh, 
         key=lambda x: (bank_holiday_assigned_uhbw[x]/fte[x],
@@ -366,12 +420,13 @@ for bh_date_str, bh_name in bank_holidays.items():
 
 
 #-------------
-# 5.7 Friday allocation
+# 5.7 Friday allocation (with two-phase approach)
 #---------------
 
 total_fridays = sum(1 for d in all_dates if d.weekday() == 4)
 full_time_target_friday = total_fridays / total_fte
 target_fridays = {p: full_time_target_friday*fte[p] for p in people}
+minimum_fridays = calculate_minimum_allocation(target_fridays)
 
 assigned_friday_counts = defaultdict(int)
 rota = {}
@@ -385,22 +440,30 @@ for d in all_dates:
     week_num = ((d - start_date).days // 7) % 2
     week_key = "week1" if week_num == 0 else "week2"
 
+    # Check if everyone has reached minimum
+    all_have_min_friday = all_have_minimum(people, assigned_friday_counts, minimum_fridays)
+
     available_people = [
         p for p in people
         if (
-            assigned_friday_counts[p] < target_fridays[p] #\Anyone can do Friday even if not in working pattern
-            and date_str not in unavailable.get(p,{})
+            date_str not in unavailable.get(p,{})
             and date_str not in oncall_protection.get(p,set())
         )
     ]
 
+    # Phase 1: Prioritize people below minimum
+    if not all_have_min_friday:
+        below_min = [p for p in available_people if not has_reached_minimum(p, assigned_friday_counts[p], minimum_fridays)]
+        if below_min:
+            available_people = below_min
+
     if not available_people:
-        working_people = [
+        # Extreme fallback
+        available_people = [
             p for p in people
-            if date_str not in unavailable.get(p,{}) #anyone can do Friday even if not working pattern
+            if date_str not in unavailable.get(p,{})
             and date_str not in oncall_protection.get(p,set())
         ]
-        available_people = sorted(working_people, key=lambda x: assigned_friday_counts[x]/fte[x])
 
     chosen = min(available_people, 
                  key=lambda x: (assigned_friday_counts[x]/fte[x],
@@ -418,11 +481,12 @@ for d in all_dates:
 
 
 # -------------------------------
-# 5️⃣ Weekday allocation (two-week rolling)
+# 5️⃣ Weekday allocation (with two-phase approach)
 # -------------------------------
 total_weekdays = sum(1 for d in all_dates if d.weekday() < 4)
 full_time_target = total_weekdays / total_fte
 target_shifts = {p: full_time_target*fte[p] for p in people}
+minimum_shifts = calculate_minimum_allocation(target_shifts)
 
 assigned_weekday_counts = defaultdict(int)
 
@@ -435,17 +499,26 @@ for d in all_dates:
     week_num = ((d - start_date).days // 7) % 2
     week_key = "week1" if week_num == 0 else "week2"
 
+    # Check if everyone has reached minimum
+    all_have_min_weekday = all_have_minimum(people, assigned_weekday_counts, minimum_shifts)
+
     available_people = [
         p for p in people
         if (
             d.weekday() in work_schedule[p][week_key]
-            and assigned_weekday_counts[p] < target_shifts[p]
             and date_str not in unavailable.get(p,{})
             and date_str not in oncall_protection.get(p,set())
         )
     ]
 
+    # Phase 1: Prioritize people below minimum
+    if not all_have_min_weekday:
+        below_min = [p for p in available_people if not has_reached_minimum(p, assigned_weekday_counts[p], minimum_shifts)]
+        if below_min:
+            available_people = below_min
+
     if not available_people:
+        # Fallback: ignore minimum requirement if no one available
         working_people = [
             p for p in people
             if d.weekday() in work_schedule[p][week_key]
@@ -454,7 +527,7 @@ for d in all_dates:
         ]
         available_people = sorted(working_people, key=lambda x: assigned_weekday_counts[x]/fte[x])
         
-        if not available_people: # Extreme case: no one available, mark date - HANNAH - this was causing a crash for some reason
+        if not available_people: # Extreme case: no one available, mark date
             rota[date_str] = "No One Available"
             print(f"⚠️  No one available for {date_str} (weekday)")
             continue

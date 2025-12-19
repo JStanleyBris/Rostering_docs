@@ -1,0 +1,15 @@
+# Virtual environment
+venv/
+env/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Excel output files (optional - remove if you want to track them)
+*.xlsx
+
+# OS files
+.DS_Store
